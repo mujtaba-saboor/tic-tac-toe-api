@@ -5,6 +5,8 @@ class JsonApiToken
 
   def self.decode_token(game_board_token)
     HashWithIndifferentAccess.new(JWT.decode(game_board_token, PRIVATE_SECRET_KEY)[0])
+  rescue JWT::ExpiredSignature
+    nil
   rescue JWT::DecodeError
     raise ApiExceptionModule::InvalidAuthToken, I18n.t(:invalid_credentials)
   end

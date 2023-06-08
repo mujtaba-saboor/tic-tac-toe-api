@@ -27,6 +27,6 @@ class ApiRequestAuthorize
   def decoded_game_board_id
     return if headers['HTTP_TOKEN'].blank? && cookies['CSRF-TOKEN'].blank?
 
-    jwt_decoded_token[:game_board_id]
+    jwt_decoded_token&.dig(:game_board_id)
   end
 end
