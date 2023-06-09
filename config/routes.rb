@@ -12,7 +12,6 @@ Rails.application.routes.draw do
       end
     end
   end
-  # mount ActionCable.server => 'api/v1/gameboard'
 
   match '/*path', controller: 'api/v1/errors', action: 'error_four_zero_four', via: :all
   root to: 'api/v1/errors#error_four_zero_four', via: :all

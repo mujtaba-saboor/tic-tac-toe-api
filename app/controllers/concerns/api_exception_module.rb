@@ -4,23 +4,17 @@
 module ApiExceptionModule
   extend ActiveSupport::Concern
 
-  class MissingAuthToken < StandardError; end
-
   class InvalidAuthToken < StandardError; end
 
-  class UserAuthenticationError < StandardError; end
-
-  class InsufficientPrivileges < StandardError; end
+  class InvalidTile < StandardError; end
 
   class GameCompleted < StandardError; end
 
   included do
     rescue_from Exception, with: :internal_server_error
     rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity
-    rescue_from ApiExceptionModule::MissingAuthToken, with: :unauthorized
     rescue_from ApiExceptionModule::InvalidAuthToken, with: :unauthorized
-    rescue_from ApiExceptionModule::UserAuthenticationError, with: :unauthorized
-    rescue_from ApiExceptionModule::InsufficientPrivileges, with: :unauthorized
+    rescue_from ApiExceptionModule::InvalidTile, with: :unprocessable_entity
     rescue_from ApiExceptionModule::GameCompleted, with: :game_completed
     rescue_from ActiveRecord::RecordNotFound, with: :not_found
   end

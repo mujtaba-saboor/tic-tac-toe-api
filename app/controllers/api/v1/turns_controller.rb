@@ -31,12 +31,14 @@ class Api::V1::TurnsController < ApplicationController
   end
 
   def check_if_game_active
-    raise ActiveRecord::RecordNotFound, "Game Board Not Present" if current_game_board.nil?
+    raise ActiveRecord::RecordNotFound, 'Game Board Not Present' if current_game_board.nil?
   end
 
   def format_params
     formatted = turn_params
     formatted[:tile_type] = Turn::TURN_BY[turn_params[:tile_type]&.downcase&.to_sym]
+    raise ApiExceptionModule::InvalidTile, 'Tile not supported' if formatted[:tile_type].blank?
+
     formatted
   end
 end

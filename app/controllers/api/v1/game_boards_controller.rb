@@ -9,7 +9,7 @@ class Api::V1::GameBoardsController < ApplicationController
   end
 
   def reset
-    current_game_board.reset
+    current_game_board&.reset
 
     format_json_response(reset: true)
   end

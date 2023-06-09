@@ -5,7 +5,7 @@ class Turn < ApplicationRecord
 
   validate :game_not_completed
   validates_presence_of :tile_type, :tile_position
-  validates :tile_type, numericality: true
+  validates :tile_type, inclusion: { in: 1..2 }
   validates :tile_position, inclusion: { in: 1..9 }
 
   validates_uniqueness_of :tile_position, scope: %i[tile_position game_board_id]

@@ -18,7 +18,6 @@ class GameBoard < ApplicationRecord
   def turns_data
     (1..9).map { |idx| { tile_position: idx } }
   end
-
   def winner_count
     winners.group(:won_by).count
   end
