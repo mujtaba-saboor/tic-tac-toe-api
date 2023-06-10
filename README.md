@@ -1,25 +1,33 @@
-# README
+# Tic Tac Toe REST API Endpoint
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This repo consists of an API endpoint that allows end-users to play a game of tic-tac-toe:
+Provided functionality includes:
 
-Things you may want to cover:
+* API Users can create game board.
+* API Users can post turns within the created game board.
+* The API returns the prev turn and the next turn identifier.
+* The API returns data in the JSON format.
 
-* Ruby version
+### **Installing**
 
-* System dependencies
+A step by step series of examples that tell you how to get a development env running
 
-* Configuration
+Clone the repo and change directory to it
 
-* Database creation
+    $ git clone git@github.com:mujtaba-saboor/tic-tac-toe-api.git && cd $_
 
-* Database initialization
+Install the dependencies
 
-* How to run the test suite
+    $ bundle install
 
-* Services (job queues, cache servers, search engines, etc.)
+Setup the database
 
-* Deployment instructions
+    $ rails db:setup
 
-* ...
-# tic-tac-toe-api
+Run the server on port 3000
+
+    $ rails s -p 3000
+
+## Running Tests
+
+    $ bundle exec rspec -fd
