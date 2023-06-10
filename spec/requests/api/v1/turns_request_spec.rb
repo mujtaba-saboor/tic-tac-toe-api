@@ -39,8 +39,17 @@ RSpec.describe 'Api::V1::Turns', type: :request do
       it 'fails creation - position repeat' do
         params = { tile_type: 'o', tile_position: 5 }
         post "/api/v1/game_boards/#{@id}/turns", params: params
+        params = { tile_type: 'x', tile_position: 5 }
         post "/api/v1/game_boards/#{@id}/turns", params: params
         expect(parse_json['error_message']).to eq('Validation failed: Tile position has already been taken')
+      end
+
+      it 'fails creation - tile order violated' do
+        params = { tile_type: 'o', tile_position: 5 }
+        post "/api/v1/game_boards/#{@id}/turns", params: params
+        params = { tile_type: 'o', tile_position: 1 }
+        post "/api/v1/game_boards/#{@id}/turns", params: params
+        expect(parse_json['error_message']).to eq('Tile not supported')
       end
 
       it 'fails creation - game completed' do

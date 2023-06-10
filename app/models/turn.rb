@@ -7,6 +7,7 @@ class Turn < ApplicationRecord
   validates_presence_of :tile_type, :tile_position
   validates :tile_type, inclusion: { in: 1..2 }
   validates :tile_position, inclusion: { in: 1..9 }
+  validate :check_turn_validity
 
   validates_uniqueness_of :tile_position, scope: %i[tile_position game_board_id]
 
@@ -20,6 +21,12 @@ class Turn < ApplicationRecord
   attr_accessor :post_result
 
   after_create :check_result
+
+  def check_turn_validity
+    return if (last_turn = game_board.turns.last).blank? || (last_turn.tile_type != tile_type)
+
+    raise ApiExceptionModule::InvalidTile, 'Tile not supported'
+  end
 
   def game_not_completed
     raise ApiExceptionModule::GameCompleted, I18n.t(:game_completed) if game_board.completed?
