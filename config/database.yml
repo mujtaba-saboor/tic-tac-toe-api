@@ -9,7 +9,7 @@ development:
   host: localhost
   database: tic_tac_toe_development
   username: postgres
-  password: root
+  password: 'root'
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -18,4 +18,4 @@ test:
   <<: *default
   database: tic_tac_toe_test
   username: postgres
-  password: root
+  password: 'root'

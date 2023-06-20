@@ -4,10 +4,6 @@
 class GameBoardSerializer < ActiveModel::Serializer
   attributes :id, :completed, :auth_token, :turns, :winner_count
 
-  def current_game_board
-    object
-  end
-
   def game_board_auth_token
     object.auth_token
   end
