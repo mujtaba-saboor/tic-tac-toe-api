@@ -7,9 +7,10 @@ RSpec.describe 'Api::V1::GameBoards', type: :request do
     context 'create' do
       it 'creates game board' do
         post '/api/v1/game_boards'
-        expect(parse_json.key?('turns')).to eq(true)
-        expect(parse_json.key?('current_game_board')).to eq(true)
-        expect(parse_json.key?('game_board_auth_token')).to eq(true)
+        expect(parse_json.key?('game_board')).to eq(true)
+        expect(parse_json['game_board'].key?('turns')).to eq(true)
+        expect(parse_json['game_board'].key?('id')).to eq(true)
+        expect(parse_json['game_board'].key?('auth_token')).to eq(true)
       end
     end
   end

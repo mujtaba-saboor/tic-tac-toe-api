@@ -11,12 +11,13 @@ module ApiExceptionModule
   class GameCompleted < StandardError; end
 
   included do
-    rescue_from Exception, with: :internal_server_error
+    # rescue_from Exception, with: :internal_server_error
     rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity
     rescue_from ApiExceptionModule::InvalidAuthToken, with: :unauthorized
     rescue_from ApiExceptionModule::InvalidTile, with: :unprocessable_entity
     rescue_from ApiExceptionModule::GameCompleted, with: :game_completed
     rescue_from ActiveRecord::RecordNotFound, with: :not_found
+    rescue_from CanCan::AccessDenied, with: :unauthorized
   end
 
   private

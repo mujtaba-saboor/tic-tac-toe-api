@@ -3,63 +3,66 @@
 class Turn < ApplicationRecord
   belongs_to :game_board
 
-  validate :game_not_completed
   validates_presence_of :tile_type, :tile_position
   validates :tile_type, inclusion: { in: 1..2 }
   validates :tile_position, inclusion: { in: 1..9 }
+  validates_uniqueness_of :tile_position, scope: %i[tile_position game_board_id]
   validate :check_turn_validity
 
-  validates_uniqueness_of :tile_position, scope: %i[tile_position game_board_id]
+  after_create :find_game_stats
+
+  attr_accessor :game_stats
 
   TURN_BY = { x: 1, o: 2 }.freeze
+
   WINNING_COMBINATIONS = [
     [1, 2, 3], [4, 5, 6], [7, 8, 9],
     [1, 4, 7], [2, 5, 8], [3, 6, 9],
     [1, 5, 9], [3, 5, 7]
   ].freeze
 
-  attr_accessor :post_result
-
-  after_create :check_result
-
   def check_turn_validity
     return if (last_turn = game_board.turns.last).blank? || (last_turn.tile_type != tile_type)
 
-    raise ApiExceptionModule::InvalidTile, 'Tile not supported'
+    errors.add(:base, 'Tile not supported')
   end
 
-  def game_not_completed
-    raise ApiExceptionModule::GameCompleted, I18n.t(:game_completed) if game_board.completed?
+  def find_game_stats
+    current_turns = game_board.turns
+
+    self.game_stats = if current_turns.size < 5
+                        { winner: nil, tie: false }
+                      else
+                        extract_winner_or_tie(current_turns)
+                      end
   end
 
-  def check_result
-    result = { winner: nil, tie: false }
-    turns = game_board.turns
+  def extract_winner_or_tie(current_turns)
+    player_x_tile_positions = current_turns.where(tile_type: Turn::TURN_BY[:x]).pluck(:tile_position)
+    player_o_tile_positions = current_turns.where(tile_type: Turn::TURN_BY[:o]).pluck(:tile_position)
 
-    return result if turns.size < 5
+    winner, winning_tiles = find_winner(player_x_tile_positions, player_o_tile_positions)
+    tie = winner.nil? && current_turns.size == 9
+    mark_game_board_completed(winner) if winner || tie
+    winner_count = game_board.winner_count
 
-    x_turns = turns.where(tile_type: Turn::TURN_BY[:x]).pluck(:tile_position)
-    o_turns = turns.where(tile_type: Turn::TURN_BY[:o]).pluck(:tile_position)
-
-    result[:winner], result[:winner_tiles] = find_winner(x_turns, o_turns)
-    result[:tie] = result[:winner].nil? && turns.size == 9
-
-    if result[:winner] || result[:tie]
-      game_board.update(completed: true)
-      won_by = result[:winner] || 'tie'
-      game_board.winners.create!(won_by: won_by)
-      result[:winner_count] = game_board.winner_count
-    end
-
-    self.post_result = result
+    { tie: tie,
+      winner: winner,
+      winning_tiles: winning_tiles,
+      winner_count: winner_count }
   end
 
-  def find_winner(x_turns, o_turns)
+  def find_winner(player_x_tile_positions, player_o_tile_positions)
     WINNING_COMBINATIONS.each do |winning_combination|
-      return ['O', winning_combination] if (winning_combination - o_turns).empty?
-      return ['X', winning_combination] if (winning_combination - x_turns).empty?
-
+      return ['O', winning_combination] if (winning_combination - player_o_tile_positions).empty?
+      return ['X', winning_combination] if (winning_combination - player_x_tile_positions).empty?
     end
     []
+  end
+
+  def mark_game_board_completed(winner)
+    game_board.update(completed: true)
+    won_by = winner || 'tie'
+    game_board.winners.create!(won_by: won_by)
   end
 end
