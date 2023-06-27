@@ -3,7 +3,7 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :game_boards, only: %i[create] do
+      resources :game_boards, only: %i[create show] do
         member do
           delete 'reset'
         end

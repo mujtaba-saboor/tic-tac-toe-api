@@ -39,6 +39,8 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    active_model_serializers (0.8.4)
+      activemodel (>= 3.0)
     activejob (6.1.7.3)
       activesupport (= 6.1.7.3)
       globalid (>= 0.3.6)
@@ -63,6 +65,7 @@ GEM
     bootsnap (1.16.0)
       msgpack (~> 1.2)
     builder (3.2.4)
+    cancancan (3.5.0)
     coderay (1.1.3)
     concurrent-ruby (1.2.2)
     crass (1.0.6)
@@ -204,7 +207,9 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  active_model_serializers (~> 0.8.0)
   bootsnap (>= 1.4.4)
+  cancancan
   database_cleaner (= 2.0.1)
   factory_bot_rails (= 6.1.0)
   faker (= 2.17.0)

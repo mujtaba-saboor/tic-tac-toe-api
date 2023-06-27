@@ -10,13 +10,16 @@ class GameBoard < ApplicationRecord
     [1, 5, 9], [3, 5, 7]
   ].freeze
 
+  after_create :create_token
+  attr_accessor :auth_token
+
   def reset
     turns.destroy_all
     update!(completed: false)
   end
 
-  def turns_data
-    (1..9).map { |idx| { tile_position: idx } }
+  def create_token
+    self.auth_token = ApiRequestAuthenticate.new(id).authenticate
   end
 
   def winner_count
